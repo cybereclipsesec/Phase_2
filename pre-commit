@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+exec 1>&2
+
+echo "🔍 Running pre-commit security verification hooks..."
+export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
+
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(py|js|json|yml|yaml|sh|md|txt|env)$')
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "✅ No source code files staged for commit. Skipping scan."
+    exit 0
+fi
+
+FAILED=0
+for file in $STAGED_FILES; do
+    if [ -f "$file" ]; then
+        python3 src/scanner.py "$file"
+        if [ $? -ne 0 ]; then
+            FAILED=1
+        fi
+    fi
+done
+
+if [ $FAILED -ne 0 ]; then
+    echo "❌ COMMIT BLOCKED: Unsafe credentials found in your staged changes."
+    exit 1
+fi
+
+echo "✅ All staged files passed security protocols."
+exit 0
