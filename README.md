@@ -40,7 +40,7 @@ You can point your scanning engine at any file or folder to run a manual audit a
 
 ---
 
-## 🔮 Future Enhancements (Roadmap)
+## 🔮 Future Enhancements 
 
 I plan to expand this automation toolkit in the future with the following advanced security features:
 
